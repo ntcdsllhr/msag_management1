@@ -1,0 +1,7 @@
+<h1>Step {{ wizard.steps.step1 }}</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ wizard.management_form }}
+    {{ wizard.form.as_p }}
+    <button type="submit">Next</button>
+</form>

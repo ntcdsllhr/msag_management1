@@ -1,0 +1,14 @@
+<!-- issue_modem.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Issue Modem</h2>
+    <p>Customer: {{ dsl_request.customer.name }}</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Issue Modem</button>
+    </form>
+</div>
+{% endblock %}
