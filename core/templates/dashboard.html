@@ -39,7 +39,7 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Work Order ID</th>
+                        <th>Work Order</th>
                         <th>technician</th>
                         <th>Status</th>
                         <th>Scheduled Date</th>
@@ -50,7 +50,7 @@
                 <tbody>
                     {% for work_order in work_orders %}
                         <tr>
-                            <td>{{ work_order.id }}</td>
+                            <td>{{ work_order.phone_number }}</td>
                             <td>{{ work_order.technician }}</td>
                             <td>{{ work_order.status }}</td>
                             <td>{{ work_order.completion_date }}</td>
@@ -70,6 +70,8 @@
     </div>
 </div>
 <button id="send-email-btn" class="btn btn-primary">Send Email</button>
+<a href="{% url 'customer-list' %}" class="btn btn-primary">View IPV6 Status</a>
+
 
 <script>
     document.getElementById('send-email-btn').addEventListener('click', function () {

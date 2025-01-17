@@ -10,30 +10,25 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">MSAG Management</a>
+            <a class="navbar-brand" href="{% url 'dashboard' %}">MSAG Management</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Dashboard</a>
+                        <a class="nav-link" href="{% url 'comprehensive_report' %}">Quick View</a>
                     </li>
                 </ul>
             </div>
-            <div class="important-links">
-                <h3>Important Links</h3>
-                <ul>
-                    
-                    <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                    <li><a href="{% url 'new_connection_request' %}">New Connection Request</a></li>
-                    <li><a href="{% url 'issue_modem' request_id=0 %}">Issue Modem (Example)</a></li>
-                    <li><a href="{% url 'assign_technician' work_order_id=0 %}">Assign Technician (Example)</a></li>
-                    <li><a href="{% url 'admin:index' %}">Admin Panel</a></li>
-                    <li><a href="{% url 'comprehensive_report' %}">Comprehensive Report</a></li>
-                    <li><a href="{% url 'generate_cpe_receipt' work_order_id=0 %}">Generate Receipt (Example)</a></li>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'customer-list' %}">IP V6 Status</a>
+                    </li>
                 </ul>
             </div>
+            
         </div>
     </nav>
 

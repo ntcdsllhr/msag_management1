@@ -157,6 +157,14 @@ from datetime import datetime
 from io import BytesIO
 
 
+from io import BytesIO
+from datetime import datetime
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
+from django.http import FileResponse
+
 def generate_cpe_receipt(request, work_order_id):
     # Fetch the work order and related details
     work_order = WorkOrder.objects.get(id=work_order_id)
@@ -211,9 +219,9 @@ def generate_cpe_receipt(request, work_order_id):
 
     # Document Title
     elements.append(Paragraph(
-        f"<b>CPE Issue/Receipt Form for Service Activation</b><br/>Form No.: DNL/{work_order_id}<br/>"
+        f"<b>CPE Issue/Receipt for Service Activation</b><br/>Form No.: DNL/{work_order_id}<br/>"
         f"Date: {datetime.now().strftime('%Y-%m-%d')}",
-        styles['Heading2']
+        styles['Heading3']
     ))
     elements.append(Spacer(1, 5))
 
@@ -241,12 +249,12 @@ def generate_cpe_receipt(request, work_order_id):
         ["Address", dsl_request.address],
         ["Email", customer.email],
     ]
-    elements.append(create_table(customer_info))
+    elements.append(create_table(customer_info, colWidths=[120, 300]))  # Wider column for Address
     elements.append(Spacer(1, 5))
     # Signature Section
     elements.append(Paragraph("Signatures", styles['Heading3']))
     signature_table_data = [
-        ["Technician Signature", "", "Customer Signature & Stamp"],
+        ["Technician Signature(Phones NTC Lahore)", "", "Customer Signature With Stamp"],
         ["", "", ""],
         ["", "", ""],  # Leave space for actual signatures
     ]
@@ -259,6 +267,7 @@ def generate_cpe_receipt(request, work_order_id):
         ('FONTSIZE', (0, 0), (-1, -1), 10),
     ]))
     elements.append(signature_table)
+
     # DSL Port and Modem Details
     elements.append(Paragraph("Assigned Equipment Details", styles['Heading3']))
     equipment_info = [
@@ -266,11 +275,12 @@ def generate_cpe_receipt(request, work_order_id):
         ["DSL Port", f"Card {dsl_port.dsl_card.card_type}, Port {dsl_port.port_number}" if dsl_port else "Not Assigned"],
         ["Modem", f"{modem.brand}, Serial No. {modem.serial_number}" if modem else "Not Issued"],
     ]
+    elements.append(Paragraph("Note: The modem/CPE and all accessories remain the property of NTC. Customers must return them upon disconnection, or charges will be added to the monthly telephone bill.", styles['Heading4']))
     elements.append(create_table(equipment_info))
     elements.append(Spacer(1, 5))
 
     # Signature Section
-    elements.append(Paragraph("Signatures", styles['Heading3']))
+    elements.append(Paragraph("Authorizer Signatures", styles['Heading3']))
     signature_table_data = [
         ["Divisional Engineer Phones NTC Lahore", "", "Divisional Engineer Data Comm NTC Lahore"],
         ["", "", ""],
@@ -293,13 +303,31 @@ def generate_cpe_receipt(request, work_order_id):
 
 
 def create_table(data, colWidths=[120, 250]):
-    """Helper function to create a styled table."""
-    table = Table(data, colWidths=colWidths)
+    """Helper function to create a styled table with text wrapping."""
+    styles = getSampleStyleSheet()
+    wrapped_data = []
+
+    # Wrap text for each cell
+    for row in data:
+        wrapped_row = []
+        for cell in row:
+            if isinstance(cell, str):  # Wrap only string cells
+                wrapped_row.append(Paragraph(cell, styles['Normal']))
+            else:
+                wrapped_row.append(cell)
+        wrapped_data.append(wrapped_row)
+
+    # Create the table with wrapped data
+    table = Table(wrapped_data, colWidths=colWidths)
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
         ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+        ('TOPPADDING', (0, 0), (-1, -1), 5),
     ]))
     return table
 
